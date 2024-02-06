@@ -4,13 +4,13 @@
  ## Usage
 
  ```
- # foo.txt
+ # testdata/hosts.txt
 host1 <1.2.3.4>
 host2 <9.8.7.6>
  ```
 
  ```
- $ cat foo.txt | recap '<([.0-9]*)>'
+ $ cat testdata/hosts.txt | recap '<([.0-9]*)>'
  1.2.3.4
  9.8.7.6
  ```
