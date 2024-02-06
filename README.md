@@ -24,6 +24,6 @@ This is an excuse for me to learn some Rust by building a tool for a commonly us
 
 ## Development
 
-### Build
-
-### Test
+```
+$ cargo build
+```
