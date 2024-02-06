@@ -2,30 +2,24 @@ use anyhow::{Context, Result};
 use clap::Parser;
 use log::info;
 use regex::Regex;
-use std::fs::File;
 use std::io::{self, BufRead, BufReader, Write};
 
 #[derive(Parser)]
 struct Cli {
     /// The regex pattern to look for
     pattern: String,
-    /// The path to the file to read
-    path: std::path::PathBuf,
 }
 
 fn main() -> Result<()> {
     env_logger::init();
     let args = Cli::parse();
-    info!("pattern: {:?}, path: {:?}", args.pattern, args.path);
+    info!("input pattern: {:?}", args.pattern);
 
     let re = Regex::new(&args.pattern)
         .with_context(|| format!("could not compile regex pattern: {}", &args.pattern))?;
     log::info!("regex: {:?}", re);
 
-    let f = File::open(&args.path)
-        .with_context(|| format!("could not read file {}", &args.path.display()))?;
-
-    let reader = BufReader::new(f);
+    let reader = BufReader::new(io::stdin().lock());
     let stdout = io::stdout();
     {
         let mut handle = io::BufWriter::new(stdout.lock());
