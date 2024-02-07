@@ -10,6 +10,17 @@ struct Cli {
     pattern: String,
 }
 
+fn write_matches(re: Regex, reader: impl BufRead, mut writer: impl Write) -> Result<()> {
+    for line in reader.lines() {
+        let line = line?;
+        let captures = re.captures(&line);
+        captures
+            .and_then(|c| c.get(1))
+            .map(|c| writeln!(writer, "{}", c.as_str()));
+    }
+    Ok(())
+}
+
 fn main() -> Result<()> {
     env_logger::init();
     let args = Cli::parse();
@@ -23,13 +34,7 @@ fn main() -> Result<()> {
     let stdout = io::stdout();
     {
         let mut handle = io::BufWriter::new(stdout.lock());
-        for line in reader.lines() {
-            let line = line?;
-            let captures = re.captures(&line);
-            captures
-                .and_then(|c| c.get(1))
-                .map(|c| writeln!(handle, "{}", c.as_str()));
-        }
+        write_matches(re, reader, &mut handle)?;
     }
     Ok(())
 }
