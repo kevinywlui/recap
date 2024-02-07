@@ -24,13 +24,11 @@ fn main() -> Result<()> {
     {
         let mut handle = io::BufWriter::new(stdout.lock());
         for line in reader.lines() {
-            if let Ok(line) = line {
-                if let Some(captures) = re.captures(&line) {
-                    if let Some(capture) = captures.get(1) {
-                        writeln!(handle, "{}", capture.as_str())?;
-                    }
-                }
-            }
+            let line = line?;
+            let captures = re.captures(&line);
+            captures
+                .and_then(|c| c.get(1))
+                .map(|c| writeln!(handle, "{}", c.as_str()));
         }
     }
     Ok(())
